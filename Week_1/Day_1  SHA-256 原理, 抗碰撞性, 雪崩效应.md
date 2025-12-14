@@ -139,15 +139,21 @@ $$Hash(A) = Hash(B)$$
 
 - **$\Sigma$ (Sigma 函数)**：“搅拌机”。
   - **原理**：通过多次 ROTR 和 XOR，把一个比特的影响力扩散到 3 个不同的位置。
+  - <img width="837" height="211" alt="image" src="https://github.com/user-attachments/assets/6f92d4af-0c55-438f-83a2-465df9db1a69" />
+
 
 - **$Ch$ (选择函数)**：“双向开关”。
-  - **原理**：$x$ 决定选 $y$ 还是 $z$。引入了非线性，让数学分析变得很困难。
+  - **原理**：**$x$** 决定选 $y$ 还是 $z$。引入了非线性，让数学分析变得很困难。
+    <img width="949" height="350" alt="image" src="https://github.com/user-attachments/assets/cfb37e19-ad8f-49d0-b904-b12c064f8355" />
 
 - **$Maj$ (多数函数)**：“投票机”。
   - **原理**：少数服从多数。保证输出反映了当前状态的“主流”特征。
+    <img width="1039" height="429" alt="image" src="https://github.com/user-attachments/assets/ed17bca4-95d4-489e-af11-9f48f3e31d01" />
 
 ## 第三层：生产流水线 (The Assembly Line)
 这就是那张复杂的 64 轮循环图。
+<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/7ccb9e61-0531-4b46-a885-b53f2268f614" />
+
 
 - **8 个工位 (A-H)**：我们有 8 个变量作为暂存区。
 - **流动规则**：
