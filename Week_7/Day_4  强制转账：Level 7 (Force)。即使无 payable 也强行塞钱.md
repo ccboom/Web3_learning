@@ -144,6 +144,7 @@ contract ForceScript is Script{
 ```
 
 这样就成功强制转入资金了！
+1
 
 ## 总结
 
