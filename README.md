@@ -80,7 +80,8 @@ graph LR
 | 4️⃣ | 工具链实战 | ![100%](https://progress-bar.dev/100) | ✅ 完成 |
 | 5️⃣ | 高级特性 | ![100%](https://progress-bar.dev/100) | ✅ 完成 |
 | 6️⃣ | 多签钱包 | ![100%](https://progress-bar.dev/100) | ✅ 完成 |
-| 7️⃣ | 汇编优化 | ![71%](https://progress-bar.dev/71) | 🔄 进行中 |
+| 7️⃣ | 汇编优化 | ![100%](https://progress-bar.dev/100) | ✅ 完成 |
+| 8️⃣ | 经典漏洞 | ![42%](https://progress-bar.dev/42) | 🔄 进行中 |
 
 </div>
 
@@ -223,7 +224,26 @@ graph LR
 
 ---
 
-## 🛠️ 技术栈
+### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Shield.png" width="25" height="25" /> Week 8 - 经典漏洞分析
+
+<details open>
+<summary><b>展开查看详情</b></summary>
+
+| 日期 | 📝 标题 | � 简短提要 | 🔗 文件路径 |
+|:---:|:---|:---|:---|
+| Day 1 | 经典漏洞：重入攻击 (Reentrancy) | 深入理解重入攻击原理（Check-Effect-Interaction）、The DAO 事件回顾与防护代码 | [📄 查看笔记](./Week_8/Day_1%20经典漏洞：重入攻击%20(Reentrancy)%20原理与防护.md) |
+| Day 2 | 经典漏洞：整数溢出 (Overflow) | 详解整数溢出与下溢原理、Solidity 0.8.x 前后的变化与 SafeMath 库 | [📄 查看笔记](./Week_8/Day_2%20%20经典漏洞：整数溢出%20(Overflow)%20与下溢。虽然%200.8.x%20已修复但需懂原理.md) |
+| Day 3 | 经典漏洞：预言机操纵 (Oracle) | 一般预言机操控原理，以 Warp Finance 为例，以及基于 K 值的防御方案 | [📄 查看笔记](./Week_8/Day_3%20经典漏洞：预言机操纵%20(Oracle%20Manipulation).md) |
+| Day 4 | 📝 待补充 | — | — |
+| Day 5 | 📝 待补充 | — | — |
+| Day 6 | 📝 待补充 | — | — |
+| Day 7 | 📝 待补充 | — | — |
+
+</details>
+
+---
+
+## �🛠️ 技术栈
 
 <div align="center">
 
@@ -268,10 +288,10 @@ graph LR
 <div align="center">
 
 ```
-总学习天数: 49 天
-完成笔记: 35+ 篇
+总学习天数: 52 天
+完成笔记: 38+ 篇
 实战项目: 7+ 个
-代码示例: 100+ 个
+代码示例: 110+ 个
 ```
 
 </div>
