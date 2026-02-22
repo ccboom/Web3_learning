@@ -1,0 +1,106 @@
+# Day 1 Setup: Build a My-Uniswap-V2 Foundry Project & Understand the Factory/Pair Architecture
+
+Today we begin development of My-Uniswap-V2. Understanding the Uniswap V2 architecture is the foundation for writing and auditing advanced DeFi protocols.
+
+Today's tasks are split into two parts:
+
+1. Set up the development environment
+2. Build a low-level intuition for the core architecture
+
+---
+
+## Step 1: Initialize the Foundry Project
+
+Open a terminal and run the following commands to initialize a clean project:
+
+```bash
+forge init My-Uniswap-V2
+cd My-Uniswap-V2
+```
+
+Once inside the project, delete the auto-generated `src/Counter.sol`, `test/Counter.t.sol`, and `script/Counter.s.sol`. We are building everything from scratch to keep the workspace clean.
+
+---
+
+## Step 2: Understand the Factory / Pair Architecture
+
+The core smart contract system of Uniswap V2 is remarkably lean, leveraging the classic **Factory Pattern**. The entire system is strictly divided into two types of contracts: a **global manager** and **local executors**.
+
+### 1. Factory Contract — The Global Manager
+
+This is the **registry and template** for the entire protocol.
+
+- **Uniqueness**: On any given chain, a single version of Uniswap has only **one** core Factory contract.
+- **Core Responsibility**: Its primary job is to **deploy new Pair contracts**. When a user wants to establish a trading market for a brand-new token pair (e.g., tokenA and tokenB), they must trigger the creation through the Factory. The Factory then acts like an assembly line, deploying a brand-new Pair contract.
+
+### 2. Pair Contract (Trading Pair / Liquidity Pool) — The Executor
+
+This is where **funds are actually held and trades happen**.
+
+- **Isolation & Security**: Each trading pair has its own independent Pair contract. This design guarantees state isolation — if one pool's logic or ledger has an issue, it will never affect other pools.
+- **Core Responsibility**: It custodies the two token reserves in the pool and handles all core business logic, including **swapping**, **adding liquidity**, and **removing liquidity**.
+- **Dual Identity**: The Pair contract doesn't just handle trades — it also inherits the **ERC20 standard**. When a liquidity provider deposits tokens into the Pair, the contract directly mints and sends **LP Tokens** to the user.
+
+> Through this architecture, the **Factory is responsible for "creating" and "bookkeeping"**, while the **Pair is responsible for "managing funds" and "executing trades"** — a clean separation of concerns.
+
+---
+
+## Step 3: The Core Data Structure — Nested Mapping
+
+For this architecture to work precisely, the Factory needs to keep an accurate record of every deployed Pair contract, ensuring that there is **always only one liquidity pool** for any two tokens, preventing duplicate creation.
+
+At the Solidity level, what data structure would you choose to store this?
+
+The answer is: **`mapping`**.
+
+But there's a catch — the common mapping is a single key-value pair, like `mapping(address => uint256)` to look up a user's balance. Our case is different: we need **two independent token addresses** to jointly locate a Pair contract address.
+
+Moreover, Solidity syntax does not support two variables side-by-side as a key. For example, `mapping(address, address => address)` is invalid. We need the following **nested mapping** structure:
+
+```solidity
+mapping(address => mapping(address => address)) public getPair;
+```
+
+> Think of it like this: you use the first key (address) to open a drawer, inside that drawer are many small boxes, and you use the second key to open one of those boxes — the address you find inside is the Pair contract address.
+
+---
+
+## Step 4: Why Address Sorting Is Necessary
+
+There's still a problem:
+
+- Suppose User A inputs the order `tokenA, tokenB`
+- Suppose User B inputs the order `tokenB, tokenA`
+
+Then `getPair[tokenA][tokenB]` and `getPair[tokenB][tokenA]` point to **two completely different storage slots**. Without intervention, two different trading pairs would be created for the same token pair — leading to **fragmented liquidity**, undermining trading efficiency and the price discovery mechanism.
+
+### The Solution: Canonical Sorting
+
+To solve this, we introduce a **"canonicalization"** mechanism that ensures the Pair address for any two tokens is always unique, regardless of the order the user inputs the token addresses.
+
+In Solidity, we can achieve this by:
+
+1. Defining an internal function that **sorts** the two input token addresses
+2. Using the sorted addresses as the mapping keys
+
+It's simply a matter of comparing address values. Under the hood, an Ethereum address is essentially a **160-bit hexadecimal integer**. The Uniswap V2 architects adopted a standard: **always use the smaller address as key1 and the larger address as key2**.
+
+```solidity
+(address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
+```
+
+With this single line of code, no matter which address the external caller inputs first, the system always produces a single canonical ordering before performing the lookup. This completely eliminates the vulnerability of duplicate pool creation.
+
+---
+
+## Summary
+
+| Concept | Key Takeaway |
+|---|---|
+| **Foundry Project Init** | Use `forge init` to create a project; delete default files to build from scratch |
+| **Factory Contract** | A globally unique registry responsible for deploying and recording all Pair contracts |
+| **Pair Contract** | Independently deployed per trading pair; handles fund custody and trade execution; also serves as an ERC20 (LP Token) |
+| **Nested Mapping** | `mapping(address => mapping(address => address))` enables dual-key lookup |
+| **Address Sorting** | A ternary expression ensures `token0 < token1`, preventing duplicate pool creation |
+
+**Key Takeaway for Today**: Uniswap V2 employs a **Factory + Pair** factory pattern. The Factory is responsible for creating and registering trading pairs, while the Pair handles actual fund management and trade execution. To guarantee that each token pair has only one liquidity pool, the system uses a nested mapping for storage and canonicalizes input through address sorting to eliminate ambiguity from different input orders. This lean yet elegant architecture is the cornerstone for understanding the entire Uniswap V2 protocol.
